@@ -80,11 +80,11 @@ export default function Home() {
               variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
               className="flex flex-wrap gap-4"
             >
-              <Button asChild size="lg" className="rounded-full px-6 font-mono">
-                <Link href="/work">View Work</Link>
+              <Button render={<Link href="/work" />} size="lg" className="rounded-full px-6 font-mono">
+                View My Work
               </Button>
-              <Button asChild variant="outline" size="lg" className="rounded-full px-6 font-mono">
-                <Link href="/articles">Articles</Link>
+              <Button render={<Link href="#contact" />} variant="outline" size="lg" className="rounded-full px-6 font-mono">
+                Get in Touch
               </Button>
             </motion.div>
           </motion.div>
@@ -187,7 +187,7 @@ export default function Home() {
           </div>
           
           <div className="mt-12 text-center">
-            <Button asChild variant="outline" size="lg" className="rounded-full px-8 font-mono">
+            <Button  variant="outline" size="lg" className="rounded-full px-8 font-mono">
               <Link href="/work">View all projects</Link>
             </Button>
           </div>
@@ -250,7 +250,7 @@ export default function Home() {
               <p className="text-lg text-primary-foreground/80 mb-8 max-w-md leading-relaxed font-sans">
                 Available for journalism commissions, editorial writing, commentary, and speaking engagements.
               </p>
-              <Button asChild variant="secondary" size="lg" className="rounded-full px-8 font-mono font-semibold">
+              <Button  variant="secondary" size="lg" className="rounded-full px-8 font-mono font-semibold">
                 <a href="mailto:hello@quintaakpan.com">Email me</a>
               </Button>
             </div>

@@ -49,7 +49,7 @@ export default async function BlogPostPage({
     <article className="w-[92%] sm:w-[85%] lg:w-[80%] max-w-3xl mx-auto py-12">
       {/* Back Link */}
       <div className="mb-8">
-        <Button asChild variant="ghost" size="sm" className="-ml-3 text-muted-foreground hover:text-foreground font-mono">
+        <Button  variant="ghost" size="sm" className="-ml-3 text-muted-foreground hover:text-foreground font-mono">
           <Link href="/blog">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Blog
