@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import { Geist, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import NextTopLoader from "nextjs-toploader";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
-import { AnimatedWave } from "@/components/animated-wave";
+import { env } from "@/env";
 import "./globals.css";
 
 const geist = Geist({
@@ -18,9 +16,60 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Quinta Akpan | Journalist",
-  description: "Journalism portfolio and personal writing of Quinta Akpan.",
+  metadataBase: new URL(env.BASE_URL),
+  title: {
+    default: "Quinta Akpan | Journalist & Writer",
+    template: "%s | Quinta Akpan",
+  },
+  description:
+    "Portfolio of Quinta Akpan. Experienced journalist, writer, and editor covering culture, news, and more.",
+  authors: [{ name: "Quinta Akpan", url: env.BASE_URL }],
+  creator: "Quinta Akpan",
+  publisher: "Quinta Akpan",
+  keywords: [
+    "journalist",
+    "writer",
+    "editor",
+    "Quinta Akpan",
+    "Nigeria",
+    "Uyo",
+    "culture",
+    "news",
+    "reporting",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Quinta Akpan | Journalist & Writer",
+    description:
+      "Portfolio of Quinta Akpan. Experienced journalist, writer, and editor covering culture, news, and more.",
+    url: env.BASE_URL,
+    siteName: "Quinta Akpan",
+    locale: "en_US",
+    type: "website",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  twitter: {
+    title: "Quinta Akpan | Journalist & Writer",
+    description:
+      "Portfolio of Quinta Akpan. Experienced journalist, writer, and editor covering culture, news, and more.",
+    card: "summary_large_image",
+  },
 };
+
+import { TRPCReactProvider } from "@/features/trpc/provider";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function RootLayout({
   children,
@@ -28,16 +77,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${geist.variable} ${jetbrainsMono.variable} h-full antialiased`}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${geist.variable} ${jetbrainsMono.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col font-sans relative">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <NextTopLoader color="#0ea5e9" showSpinner={false} />
-          <AnimatedWave />
-          <div className="relative z-10 flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TRPCReactProvider>
+            <NextTopLoader color="var(--primary)" showSpinner={false} />
+            {children}
+            <Toaster richColors={false} position="bottom-right" />
+          </TRPCReactProvider>
         </ThemeProvider>
       </body>
     </html>

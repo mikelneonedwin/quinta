@@ -2,100 +2,100 @@
 
 import * as React from "react";
 
-const WORK_TYPES = [
-  "Reporting on Breaking and Developing News",
-  "Conducting In-Depth Interviews and Conversations",
-  "Writing Detailed Feature Stories",
-  "Producing Investigative and Accountability Reports",
-  "Covering Government and Public Affairs",
+const PROJECT_TYPES = [
+  "reporting on breaking and developing news",
+  "conducting in-depth interviews and conversations",
+  "writing detailed feature stories",
+  "producing investigative and accountability reports",
+  "covering government and public affairs",
 ];
+
+function subscribeReducedMotion(callback: () => void) {
+  const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  mediaQuery.addEventListener("change", callback);
+  return () => mediaQuery.removeEventListener("change", callback);
+}
+
+function getReducedMotionSnapshot() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function getReducedMotionServerSnapshot() {
+  return false;
+}
 
 export function WorkTypewriter() {
   const [phraseIndex, setPhraseIndex] = React.useState(0);
-  const [phase, setPhase] = React.useState<"typing" | "paused" | "deleting">("typing");
-  const [charIndex, setCharIndex] = React.useState(0);
-  const [prefersReducedMotion, setPrefersReducedMotion] = React.useState(false);
+  const [displayedText, setDisplayedText] = React.useState("");
+  const [isDeleting, setIsDeleting] = React.useState(false);
 
-  React.useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setPrefersReducedMotion(mediaQuery.matches);
-
-    const handleChange = () => setPrefersReducedMotion(mediaQuery.matches);
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
+  const prefersReducedMotion = React.useSyncExternalStore(
+    subscribeReducedMotion,
+    getReducedMotionSnapshot,
+    getReducedMotionServerSnapshot,
+  );
 
   React.useEffect(() => {
     if (prefersReducedMotion) return;
 
-    let timeout: NodeJS.Timeout;
-    const currentPhrase = WORK_TYPES[phraseIndex];
+    const currentPhrase = PROJECT_TYPES[phraseIndex];
+    let timer: NodeJS.Timeout;
 
-    if (phase === "typing") {
-      if (charIndex < currentPhrase.length) {
-        timeout = setTimeout(() => {
-          setCharIndex((prev) => prev + 1);
-        }, 35); // Typing speed
+    if (!isDeleting) {
+      // Typing phase (calm, slower typing)
+      if (displayedText.length < currentPhrase.length) {
+        timer = setTimeout(() => {
+          setDisplayedText(currentPhrase.slice(0, displayedText.length + 1));
+        }, 80); // Calm typing speed
       } else {
-        timeout = setTimeout(() => {
-          setPhase("paused");
-        }, 35);
+        // Pause at full word before deleting
+        timer = setTimeout(() => {
+          setIsDeleting(true);
+        }, 2500);
       }
-    } else if (phase === "paused") {
-      timeout = setTimeout(() => {
-        setPhase("deleting");
-      }, 1000); // Wait 1s before disappearing
-    } else if (phase === "deleting") {
-      timeout = setTimeout(() => {
-        setPhraseIndex((prev) => (prev + 1) % WORK_TYPES.length);
-        setCharIndex(0);
-        setPhase("typing");
-      }, 350); // 350ms for the CSS wipe to complete
+    } else {
+      // Deleting phase (calm deletion)
+      if (displayedText.length > 0) {
+        timer = setTimeout(() => {
+          setDisplayedText(currentPhrase.slice(0, displayedText.length - 1));
+        }, 45); // Calm deletion speed
+      } else {
+        // Pause before typing next phrase
+        timer = setTimeout(() => {
+          setIsDeleting(false);
+          setPhraseIndex((prev) => (prev + 1) % PROJECT_TYPES.length);
+        }, 300);
+      }
     }
 
-    return () => clearTimeout(timeout);
-  }, [phase, charIndex, phraseIndex, prefersReducedMotion]);
+    return () => clearTimeout(timer);
+  }, [displayedText, isDeleting, phraseIndex, prefersReducedMotion]);
 
   if (prefersReducedMotion) {
     return (
-      <div className="flex items-center gap-2 font-mono text-sm sm:text-base text-muted-foreground mb-8">
-        <span className="text-muted-foreground font-medium">My work includes</span>
-        <span className="text-foreground font-semibold">{WORK_TYPES.join(" • ")}</span>
+      <div className="flex flex-wrap items-center gap-2 font-mono text-sm sm:text-base text-muted-foreground mb-8">
+        <span className="text-muted-foreground font-medium">
+          My work includes
+        </span>
+        <span className="text-muted-foreground font-medium">
+          {PROJECT_TYPES.join(" • ")}
+        </span>
       </div>
     );
   }
 
-  const fullText = WORK_TYPES[phraseIndex];
-  // Keep the text fully rendered during deletion so we can wipe it via CSS
-  const displayedText = phase === "deleting" ? fullText : fullText.slice(0, charIndex);
-
   return (
-    <div className="flex items-center flex-wrap gap-x-2 gap-y-1 font-mono text-sm sm:text-base text-muted-foreground mb-8 min-h-[1.75rem]">
-      {/* Static leading text */}
-      <span className="text-muted-foreground font-medium whitespace-nowrap">
+    <div className="font-mono text-sm sm:text-base text-muted-foreground mb-8 min-h-[2rem]">
+      <span className="text-muted-foreground font-medium mr-2 inline">
         My work includes
       </span>
-
-      <div className="flex items-center min-w-0">
-        {/* Animated changing text with CSS wipe */}
-        <span 
-          className="text-foreground font-semibold tracking-wide whitespace-nowrap transition-all ease-out"
-          style={{
-            clipPath: phase === "deleting" ? "inset(0 100% 0 0)" : "inset(0 0% 0 0)",
-            transitionDuration: phase === "deleting" ? "350ms" : "0ms",
-          }}
-        >
-          {displayedText}
-        </span>
-
-        {/* Blinking editorial cursor */}
-        <span 
-          className={`inline-block w-[2px] h-4 sm:h-5 bg-primary ml-[1px] ${
-            phase === "paused" ? "animate-[pulse_1s_ease-in-out_infinite]" : ""
-          } ${phase === "deleting" ? "opacity-0 transition-opacity duration-150" : "opacity-100"}`}
-          aria-hidden="true"
-        />
-      </div>
+      <span className="text-muted-foreground font-medium inline break-words">
+        {displayedText}
+      </span>
+      <span
+        className="inline-block w-[2px] h-4 sm:h-5 bg-primary ml-1 align-middle animate-[pulse_1s_ease-in-out_infinite]"
+        aria-hidden="true"
+      />
     </div>
   );
 }

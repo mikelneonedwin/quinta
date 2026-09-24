@@ -1,9 +1,22 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element */
+
 import { motion } from "framer-motion";
 import { ArrowUpRight, MapPin, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { WorkItem } from "@/lib/work-data";
+import { getImageUrl } from "@/lib/image-url";
+
+export interface WorkItem {
+  id: string;
+  title: string;
+  role: string;
+  location?: string;
+  date: string;
+  description: string;
+  visual?: string;
+  url: string;
+}
 
 export function WorkCard({
   item,
@@ -32,7 +45,7 @@ export function WorkCard({
             {item.visual && (
               <div className="rounded-xl overflow-hidden aspect-video w-full bg-muted relative -mt-1 mb-4">
                 <img
-                  src={item.visual}
+                  src={getImageUrl(item.visual)}
                   alt={item.title}
                   className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 />
@@ -51,11 +64,15 @@ export function WorkCard({
 
             {/* Location & Date */}
             <div className="flex items-center gap-3 text-xs font-mono text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <MapPin className="w-3 h-3 text-primary shrink-0" />
-                {item.location}
-              </span>
-              <span>•</span>
+              {item.location ? (
+                <>
+                  <span className="flex items-center gap-1">
+                    <MapPin className="w-3 h-3 text-primary shrink-0" />
+                    {item.location}
+                  </span>
+                  <span>•</span>
+                </>
+              ) : null}
               <span className="flex items-center gap-1">
                 <Calendar className="w-3 h-3 text-primary shrink-0" />
                 {item.date}
@@ -72,7 +89,7 @@ export function WorkCard({
           <div className="pt-6 mt-auto border-t border-border/40">
             <span className="inline-flex items-center text-xs font-mono text-muted-foreground group-hover:text-foreground transition-colors uppercase tracking-wider">
               <ArrowUpRight className="mr-1.5 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              view report
+              view
             </span>
           </div>
         </Card>

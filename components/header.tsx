@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,8 +11,7 @@ import { Button } from "@/components/ui/button";
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/articles", label: "Articles" },
-  { href: "/blog", label: "Blog" },
-  { href: "/work", label: "Work" },
+  { href: "/projects", label: "Projects" },
 ];
 
 export function Header() {
@@ -29,10 +28,12 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const router = useRouter();
+
   const scrollToContact = (e: React.MouseEvent) => {
     e.preventDefault();
     if (pathname !== "/") {
-      window.location.href = "/#contact";
+      router.push("/#contact");
       return;
     }
     const contactSection = document.getElementById("contact");
@@ -57,7 +58,10 @@ export function Header() {
         <div className="flex h-20 items-center justify-between gap-2">
           {/* Logo / Name - Prevent compression on 390px mobile screens */}
           <div className="shrink-0 min-w-max">
-            <Link href="/" className="font-mono text-lg sm:text-2xl font-bold tracking-tight text-foreground whitespace-nowrap">
+            <Link
+              href="/"
+              className="font-mono text-lg sm:text-2xl font-bold tracking-tight text-foreground whitespace-nowrap"
+            >
               Quinta Akpan
             </Link>
           </div>
@@ -71,8 +75,8 @@ export function Header() {
                   key={link.href}
                   href={link.href}
                   className={`px-4 py-2 text-sm font-mono font-medium rounded-full transition-all duration-300 ${
-                    isActive 
-                      ? "bg-secondary text-secondary-foreground shadow-xs font-semibold" 
+                    isActive
+                      ? "bg-secondary text-secondary-foreground shadow-xs font-semibold"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   }`}
                 >
@@ -138,12 +142,18 @@ export function Header() {
           >
             <div className="w-[92%] sm:w-[85%] mx-auto py-6 flex flex-col gap-4">
               <div className="flex justify-between items-center mb-2">
-                <span className="font-mono text-lg font-medium text-muted-foreground">Menu</span>
-                <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)}>
+                <span className="font-mono text-lg font-medium text-muted-foreground">
+                  Menu
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
                   <X className="h-5 w-5" />
                 </Button>
               </div>
-              
+
               <nav className="flex flex-col gap-2">
                 {navLinks.map((link) => {
                   const isActive = pathname === link.href;
@@ -153,8 +163,8 @@ export function Header() {
                       href={link.href}
                       onClick={() => setMobileMenuOpen(false)}
                       className={`px-4 py-3 text-lg font-mono font-medium rounded-xl transition-all duration-300 ${
-                        isActive 
-                          ? "bg-secondary text-secondary-foreground font-semibold" 
+                        isActive
+                          ? "bg-secondary text-secondary-foreground font-semibold"
                           : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       }`}
                     >
