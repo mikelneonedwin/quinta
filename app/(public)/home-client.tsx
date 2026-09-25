@@ -344,7 +344,7 @@ export default function HomeClient({
                   );
                   if (!emailItem) return null;
                   const emailAddress = emailItem.value.replace(/^mailto:/, "");
-                  const emailLink = `mailto:${emailAddress}?subject=Inquiry%3A%20Freelance%20Reporting%20%2F%20Collaboration&body=Hi%20Quinta%2C%0A%0AI%20am%20reaching%20out%20to%20discuss%20a%20potential%20opportunity...%0A%0A%5BPlease%20provide%20details%20about%20your%20project%2C%20timeline%2C%20and%20budget.%5D%0A%0ABest%20regards%2C%0A`;
+                  const emailLink = `mailto:${emailAddress}`;
 
                   return (
                     <a
